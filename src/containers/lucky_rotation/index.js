@@ -19,7 +19,6 @@ import {
 	getData
 } from '../../modules/profile'
 import rotaion from './images/muivongquay.png'
-import bg_rotaion from './khungvongquay.png'
 
 import backtotop from './images/backtotop.png'
 import sukiendangdienra from './images/btn-sukiendangdienra.png'
@@ -48,17 +47,13 @@ import img_tudo from './images/img-tudo.png';
 import img_maduthuong from './images/img-maduthuong.png';
 import img_thongbao from './images/img-thongbao.png';
 import img_livestream from './images/img-livestream.png';
-import img_giaithuong_1 from './images/img-giaithuong-1.png';
-import img_giaithuong_2 from './images/img-giaithuong-2.png';
-import img_giaithuong_1m from './images/img-giaithuong-1m.png';
-import img_giaithuong_2m from './images/img-giaithuong-2m.png';
+import img_giaithuong from './images/img-giaithuong.png';
 // import muiten from './images/muiten.png';
 import ReactResizeDetector from 'react-resize-detector'
 import spin from './images/spin.gif';
 import $ from 'jquery';
 import 'bootstrap';
 
-import data from './data'
 const styles = {
 	paper: {
 		background: "#fff",
@@ -453,12 +448,13 @@ class Lucky_Rotation extends React.Component {
 	}
 
 	btnStart=()=>{
-		const {wheelSpinning}=this.state;
-		if(!wheelSpinning){
-			this.setState({data_auto:[], closeAuto:true},()=>{
-				this.start();
-			})
-		}	
+		// const {wheelSpinning}=this.state;
+		// if(!wheelSpinning){
+		// 	this.setState({data_auto:[], closeAuto:true},()=>{
+		// 		this.start();
+		// 	})
+		// }	
+		this.startSpin(5)
 	}
 
 	startSpin=(segmentNumber)=>{
@@ -833,7 +829,7 @@ class Lucky_Rotation extends React.Component {
 					<p className="btn-thamgiangay"><a href="#p2" title="Tham gia ngay"><img src={thamgiangay} alt="Tham gia ngay" width="200" className="img-fluid" /></a></p>
 					<div className="position-absolute-p1">
 						<ul className="nav flex-column menu-left-p1">
-							<li className="pt-6"><a href="https://scoin.vn/nap-game" title="Nạp Scoin" target="_blank">Nạp Game</a></li>
+							<li className="pt-6"><a href="https://scoin.vn/nap-game" title="Nạp Scoin" target="_blank">Active ViP</a></li>
 							{/* <li className="pt-6"><a href="http://sandbox.scoin.vn/nap-vao-game?GameId=330287" title="Nạp Scoin" target="_blank">Nạp Game</a></li> */}
 							<li className="pt-5b"><a href="#" title="Thể lệ" onClick={this.showModalRules}>Thể lệ</a></li>
 							<li className="pt-5b"><a href="#" title="Phần thưởng" onClick={this.showModalBonus}>Phần thưởng</a></li>
@@ -873,7 +869,6 @@ class Lucky_Rotation extends React.Component {
 				<div className="menu-right">
 					<ul className="nav flex-column">
 						<li className="pt-6"><a style={{color:"#fff", cursor:'pointer'}} title="Tủ đồ" onClick={this.showModalTuDo}>Tủ đồ</a>{notification_tudo}</li>
-						<li className="pt-5a"><a style={{color:"#fff", cursor:'pointer'}} title="Mã dự thưởng" onClick={this.showModalCodeBonus}>Mã dự thưởng</a>{notification_mdt}</li>
 					</ul>
 				</div>
 			</div>
@@ -895,7 +890,7 @@ class Lucky_Rotation extends React.Component {
 						</div>
 					</div>
 				</div> */}
-				<div class="bg-ketquaquayso">
+				{/* <div class="bg-ketquaquayso">
 					<h2 class="d-block text-center text-kqqs mb-0 bg-title-mdt">KQ Mã dự thưởng</h2>
 					<h4 class="text-center text-white">Tự động cập nhật sau livestream lúc 19:00 ngày 04/11/2019</h4>
 					<div class="row px-5">
@@ -911,7 +906,7 @@ class Lucky_Rotation extends React.Component {
 							
 						</div>
 					</div>
-				</div>
+				</div> */}
 				<h2 id="bvd" className="d-block btn-ketqua mt-5"><img src={icon_bangvinhdanh} alt="icon" />Bảng vinh danh</h2>
 				<div className="table-responsive mt-4">
 					<table className="table table-borderless tbl-bvd mx-auto text-center">
@@ -1000,13 +995,8 @@ class Lucky_Rotation extends React.Component {
 					</div>
 
 					{/* <!-- Modal body --> */}
-					<div class="modal-body w-100 giaithuong-pc">
-						<img src={img_giaithuong_1} class="w-100" />
-						<img src={img_giaithuong_2} class="w-100" />
-					</div>
-					<div class="modal-body w-100 giaithuong-mobile">
-						<img src={img_giaithuong_1m} class="w-100" />
-						<img src={img_giaithuong_2m} class="w-100" />
+					<div class="modal-body w-100">
+						<img src={img_giaithuong} class="w-100" />
 					</div>
 					</div>
 				</div>
@@ -1026,100 +1016,63 @@ class Lucky_Rotation extends React.Component {
 					{/* <!-- Modal body --> */}
 					<div class="modal-body">
 						<h3 class="text-red">I. Đối tượng tham gia</h3>
-						<p class="text-thele pl-3"> &bull; Khách hàng có tài khoản Scoin. Nếu chưa có, đăng ký <code><a class="text-primary" href="https://scoin.vn/" title="Đăng ký" target="_blank">tại đây</a></code>. <br />
-						&bull; Khách hàng cần xác thực số ĐT tại đây nếu chưa thực hiện <code><a class="text-primary" href="https://scoin.vn/cap-nhat-sdt" title="Xác Thực" target="_blank">tại đây</a></code>. <br />
-						{/* &bull; Nạp game dùng thẻ Scoin mệnh giá tối thiểu 50k trong thời gian từ 0h 28/10 - 23:59 03/11. */}
-						<code class="h5">&bull; Dùng thẻ Scoin nạp trực tiếp vào game</code> trong thời gian từ 0h 28/10 - 23:59 03/11 để được tặng lượt chơi</p>
+						<p class="text-thele pl-3"> &bull; Toàn bộ khách hàng đã active tài khoản khách hàng VIP. Nếu chưa active và chưa là khách hàng VIP, Khách hàng vui lòng thực hiện active và trở thành VIP <code><a href="https://vip.scoin.vn" title="Đăng ký" target="_blank" class="text-primary">tại đây</a></code>. <br />
+        &bull;  Điều kiện để tham gia game VQMM là: là khách hàng VIP; đã active tài khoản VIP.</p>
 						<h3 class="text-red">II. Cách thức tham gia sự kiện</h3>
-						<div class="row">
-						<div class="col-4 bg-orange py-2 text-center border border-white rounded-lg"><button type="button" class="btn btn-primary d-block mx-auto mb-3">Bước 1</button><p class="text-dark">Nạp game(thẻ Scoin)</p> <p class="font-weight-bold text-success my-1">&nabla;</p> <p class="text-dark">Nhận lượt chơi</p></div> 
-						<div class="col-4 bg-orange py-2 text-center border border-white rounded-lg"><button type="button" class="btn btn-info d-block mx-auto mb-3">Bước 2</button><p class="text-dark">Chơi vòng quay </p> <p class="font-weight-bold text-success my-1">&nabla;</p> <p class="text-dark">Nhận mã dự thưởng</p></div> 
-						<div class="col-4 bg-orange py-2 text-center border border-white rounded-lg"><button type="button" class="btn btn-success d-block mx-auto mb-3">Bước 3</button><p class="text-dark">So KQ Mã dự thưởng <br /> 19:00 04/11</p></div> 
-						</div>
-						<p class="text-thele pt-3 pl-3">  &bull; Bước 1:  Nạp game bất kỳ, <code class="h5">chọn thẻ cào> thẻ Scoin mệnh giá tối thiểu 50k.</code> <br />
-						&bull; Bước 2: Nhận lượt quay miễn phí, tương ứng với thẻ Scoin nạp thành công:</p>
-						<div class="table-responsive">
-						<table class="table table-bordered text-center text-thele">
-							<thead>
-								<tr>
-									<th colspan="4">Nạp thẻ Scoin vào game</th> 
-								</tr>
-								<tr>
-									<th>STT</th>
-									<th>Mệnh giá thẻ Scoin (VNĐ)</th>
-									<th>Số lượt quay chuẩn</th>
-									<th>Số lượt quay (đã cộng)</th>
-								</tr>
-							</thead>
-						<tbody>
-							<tr>
-								<td>1</td>
-								<td>50.000</td>
-								<td>1</td>
-								<td></td>
-							</tr>
-							<tr>
-								<td>2</td>
-								<td>100.000</td>
-								<td>2</td>
-								<td></td>
-							</tr>
-							<tr>
-								<td>3</td>
-								<td>200.000</td>
-								<td>4</td>
-								<td></td>
-							</tr>
-							<tr>
-								<td>4</td>
-								<td>300.000</td>
-								<td>6</td>
-								<td></td>
-							</tr>
-							<tr>
-								<td>5</td>
-								<td>500.000</td>
-								<td>10</td>
-								<td></td>
-							</tr>
-							<tr>
-								<td>6</td>
-								<td>1.000.000</td>
-								<td>22</td>
-								<td>10%</td>
-							</tr>
-							<tr>
-								<td>7</td>
-								<td>2.000.000</td>
-								<td>44</td>
-								<td>10%</td>
-							</tr>
-							<tr>
-								<td>8</td>
-								<td>5.000.000</td>
-								<td>120</td>
-								<td>20%</td>
-							</tr>
-						</tbody>
-						</table>
-						</div>
-						<p class="text-thele pt-3 pl-3"> &bull; Bước 3: Chơi vòng quay tại link: <a style={{color:'#0066ff', textDecoration:'underline'}}>www.vongquayt10.splay.vn</a> để nhận Mã dự thưởng (Cần đăng nhập bằng tài khoản Scoin để chơi). <br></br>
-						&bull; Bước 4: Mã dự thưởng dùng để đối chiếu với KQ Mã dự thưởng ngày 04/11/2019 để xác định trúng thưởng: <strong>1 điện thoại iPhone 11 Pro Max 256GB</strong></p>
+						<p class="text-thele pt-3 pl-3"> &bull; Bước 1:  Trở thành khách hàng VIP <br />
+					&bull; Bước 2: Nhận lượt quay miễn phí hằng ngày, tương ứng với cấp VIP</p>
+							<div class="table-responsive">
+								<table class="table table-bordered text-center text-thele">
+									<thead>
+									<tr>
+										<th>STT</th>
+										<th>Cấp VIP</th>
+										<th>Số lượt quay/ngày</th>
+									</tr>
+									</thead>
+									<tbody>
+									<tr>
+										<td>1</td>
+										<td>VIP Đồng</td>
+										<td>5</td>
+									</tr>
+									<tr>
+										<td>2</td>
+										<td>VIP Bạc</td>
+										<td>10</td>
+									</tr>
+									<tr>
+										<td>3</td>
+										<td>VIP Vàng</td>
+										<td>15</td>
+									</tr>
+									<tr>
+										<td>4</td>
+										<td>VIP Bạch kim</td>
+										<td>20</td>
+									</tr>                  
+									</tbody>
+								</table>
+							</div>
+							<p class="text-thele pt-3 pl-3"> &bull; Bước 3: Chơi vòng quay tại link: <a href="https://vqmmvip.splay.vn" title="https://vqmmvip.splay.vn">https://vqmmvip.splay.vn</a>(Cần đăng nhập bằng tài khoản Scoin để chơi).</p>
 						<h3 class="text-red">III. Các giải thưởng</h3>
-						<p class="text-thele pl-3"> &bull; Scoin sẽ được cộng trực tiếp vào ví Scoin của khách hàng.<br></br>
-						&bull; Thẻ Scoin: sẽ được lưu trữ trong Tủ đồ sự kiện. Khách hàng có thể xem và sử dụng trực tiếp để nạp điện thoại hoặc nạp vào các game của VTC Mobile.<br></br>
-						&bull; Mã dự thưởng: lưu trữ trong mục Mã dự thưởng. Khách hàng có thể tra cứu dễ dàng.<br></br>
-						&bull; Giải đặc biệt - iPhone 11 Pro Max: Sau khi KQ Mã dự thưởng ngày 04/11/2019 được công bố, BTC sẽ cập nhật thông tin của khách hàng trúng thưởng trong Bảng vinh danh. Khách hàng trúng giải liên hệ Hotline 1900 1104 để được hướng dẫn nhận thưởng.
-						</p>
+						<p class="text-thele pl-3"> &bull; Iphone 12 Pro max 256Gb.<br></br>
+							&bull; Thẻ Scoin: sẽ được lưu trữ trong Tủ đồ sự kiện. Khách hàng có thể xem và nạp vào các game của VTC Mobile.<br></br>
+							&bull; Nạp trực tiếp 50k Scoin vào tài khoản người chơi.<br></br>
+							&bull; Giftcode từ cấp độ 1 đến cấp độ 6, sẽ được lưu trữ trong Tủ đồ sự kiện. Khách hàng có thể xem và nạp vào game tương ứng.<br></br>
+							&bull; Hộp quà đặc biệt.
+							</p>
+
 
 						<h3 class="text-red">IV. Thời gian trao thưởng</h3>
-						<p class="text-thele pl-3"> &bull; Công ty cổ phần VTC Dịch vụ di động sẽ trao giải thưởng cho khách hàng chậm nhất sau 15 ngày làm việc kể từ khi kết thúc sự kiện.</p>
-						<p class="text-thele pl-3"><code>Lưu ý:</code> <br />&bull; Khi đến nhận giải thưởng, khách hàng cần đem theo giấy tờ tùy thân (CMND/ CCCD/ Hộ chiếu còn hiệu lực. Theo khoản 6, điều 3, chương 1 của Luật thuế thu nhập cá nhân, những người may mắn trúng giải thưởng hiện vật có giá trị kinh tế cao có nghĩa vụ nộp thuế theo quy định của Nhà nước. Thông tin chi tiết xem <code><a class="text-primary" href="https://www.mof.gov.vn/webcenter/portal/mttpltc/r/m/pchtrphlu/pchtrthtu/pchtrthtu_chitiet?dDocName=BTC260955&dID=31536&_afrLoop=73261410332298795#!%40%40%3F_afrLoop%3D73261410332298795%26centerWidth%3D100%2525%26dDocName%3DBTC260955%26dID%3D31536%26leftWidth%3D0%2525%26rightWidth%3D0%2525%26showFooter%3Dfalse%26showHeader%3Dfalse%26_adf.ctrl-state%3D1a8d3rpn02_4" title="tại đây" target="_blank">tại đây</a></code>.<br></br>
+							<p class="text-thele pl-3"> &bull; Công ty cổ phần VTC Dịch vụ di động sẽ trao giải thưởng cho khách hàng chậm nhất sau 15 ngày làm việc kể từ khi kết thúc sự kiện.</p>
+								<p class="text-thele pl-3"><code>Lưu ý:</code>  <br />&bull; Khi đến nhận giải thưởng, khách hàng cần đem theo giấy tờ tùy thân (CMND/ CCCD/ Hộ chiếu còn hiệu lực. 
+								Theo khoản 6, điều 3, chương 1 của Luật thuế thu nhập cá nhân, những người may mắn trúng giải thưởng hiện vật có giá trị kinh tế cao có nghĩa vụ nộp thuế theo quy định của Nhà nước. 
+								Thông tin chi tiết xem <code><a href="https://www.mof.gov.vn/webcenter/portal/mttpltc/r/m/pchtrphlu/pchtrthtu/pchtrthtu_chitiet?dDocName=BTC260955&dID=31536&_afrLoop=73261410332298795#!%40%40%3F_afrLoop%3D73261410332298795%26centerWidth%3D100%2525%26dDocName%3DBTC260955%26dID%3D31536%26leftWidth%3D0%2525%26rightWidth%3D0%2525%26showFooter%3Dfalse%26showHeader%3Dfalse%26_adf.ctrl-state%3D1a8d3rpn02_4" title="tại đây" target="_blank" class="text-primary">tại đây</a></code>.<br></br>
 						&bull; Trong tất cả các trường hợp, quyết định của Công ty cổ phần VTC Dịch vụ di động là quyết định cuối cùng. Mọi trường hợp gian lận hoặc không trung thực sẽ bị xử lý theo pháp luật.
 
 
 						</p>
-
 						</div>
 
 					</div>
