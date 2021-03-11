@@ -448,13 +448,13 @@ class Lucky_Rotation extends React.Component {
 	}
 
 	btnStart=()=>{
-		// const {wheelSpinning}=this.state;
-		// if(!wheelSpinning){
-		// 	this.setState({data_auto:[], closeAuto:true},()=>{
-		// 		this.start();
-		// 	})
-		// }	
-		this.startSpin(5)
+		const {wheelSpinning}=this.state;
+		if(!wheelSpinning){
+			this.setState({data_auto:[], closeAuto:true},()=>{
+				this.start();
+			})
+		}	
+		// this.startSpin(5)
 	}
 
 	startSpin=(segmentNumber)=>{
@@ -857,7 +857,7 @@ class Lucky_Rotation extends React.Component {
 						
 					</div>
 					<div className="btn-quay">
-						<h5 className="text-center">Còn: {turnsFree} lượt &nbsp;<a className="small" href="#" title="Thêm lượt" data-toggle="modal" data-target="#myModal10"><u>Thêm lượt</u></a></h5>
+						<h5 className="text-center">Còn: {turnsFree} lượt &nbsp;<a className="small" href="#" title="Thêm lượt" data-toggle="modal" data-target="#themluot"><u>Thêm lượt</u></a></h5>
 						<a style={{cursor:'pointer'}} onClick={this.btnStart}><img src={btn_quay_p2} alt="" className="img-fluid hv" /></a>
 						<div className="custom-control custom-checkbox">
 							<input type="checkbox" className="custom-control-input" id="customCheck" name="autospin" />
@@ -1566,6 +1566,76 @@ class Lucky_Rotation extends React.Component {
 									<iframe src={linkLiveStream} width="560" height="315" style={{border:'none', overflow:'hidden'}} scrolling="no" frameborder="0" allowTransparency="true" allowFullScreen="true"></iframe>
 								</div>     
 						</div>
+
+						</div>
+					</div>
+				</div>
+
+				{/* <!-- The Modal Thêm lượt quay--> */}
+				<div class="modal fade" id="themluot">
+					<div class="modal-dialog">
+						<div class="modal-content popup-phanthuong">
+						<div class="modal-header border-bottom-0">
+							<h4 class="modal-title w-100 text-center"><img src={img_thongbao} alt="" /></h4>
+							<button type="button" class="close" data-dismiss="modal"><img src={btn_close} alt="Đóng" /></button>
+						</div>
+
+						<div class="modal-body">
+							<div class="table-responsive mt-2">
+								<h5 class="text-center">Bạn sẽ nhận được lượt chơi miễn phí hằng ngày khi là khách hàng VIP của VTC Mobile.</h5>
+								<table class="table table-striped mx-auto text-center" style={{color:"#282652", width:"99%"}}> 
+									<thead>
+									<tr>
+										<th>STT</th>
+										<th>Cấp VIP</th>
+										<th>Số lượt quay/ngày</th>
+									</tr>
+									</thead>
+									<tbody>
+									<tr>
+										<td>1</td>
+										<td>VIP Đồng</td>
+										<td>5</td>
+									</tr>
+									<tr>
+										<td>2</td>
+										<td>VIP Bạc</td>
+										<td>10</td>
+									</tr>
+									<tr>
+										<td>3</td>
+										<td>VIP Vàng</td>
+										<td>15</td>
+									</tr>
+									<tr>
+										<td>4</td>
+										<td>VIP Bạch kim</td>
+										<td>20</td>
+									</tr>                  
+									</tbody>
+								</table>
+							</div>
+							
+						</div>
+
+						</div>
+					</div>
+				</div>
+
+				{/* <!-- The Modal Thông báo Active tk VIP--> */}
+				<div class="modal fade" id="activeVip">
+					<div class="modal-dialog">
+						<div class="modal-content popup-phanthuong">
+							<div class="modal-header border-bottom-0">
+								<h4 class="modal-title w-100 text-center"><img src={img_thongbao} alt="" /></h4>
+								<button type="button" class="close" data-dismiss="modal"><img src={btn_close} alt="Đóng" /></button>
+							</div>
+							<div class="modal-body">
+								<div class="table-responsive mt-2">              
+									<h5 class="text-thele lead text-center">Bạn cần active tài khoản VIP để chơi.</h5>
+									<a href="https://vip.scoin.vn" type="button" target="_blank" class="btn btn-xacnhan text-white btn-block text-center py-4">Trang chủ VIP</a>
+								</div>       
+							</div>
 
 						</div>
 					</div>
