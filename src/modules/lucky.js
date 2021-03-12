@@ -186,6 +186,32 @@ export const getVinhDanh = (limit, offset) => {
 }
 
 
+export const pickCard = (token) => {
+	var header = {
+		headers: {
+			"Content-Type": "application/json",
+			// "Authorization": "bearer " + token,
+		}
+	}
+	return dispatch => {
+		dispatch({
+			type: LUCKY_REQUEST
+		})
+		// var url = Ultilities.base_url() + "/awardSpin?spinId=" + id + "&scoinToken=" + scoinToken;
+		var url = Ultilities.base_url() + "luckywheel/spin/?userToken=" + token;
+		return axios.get(url, header).then(function (response) {
+			dispatch({
+				type: LUCKY_PICK_RESPONSE,
+				data: response.data
+			})
+		}).catch(function (error) {
+			dispatch({
+				type: SERVER_ERROR
+			})
+		})
+	}
+}
+
 export const getData = (limit, offset) => {
 	return dispatch => {
 		dispatch({
@@ -257,32 +283,6 @@ export const getDetailData = (id) => {
 }
 
 
-
-export const pickCard = (token, id) => {
-	var header = {
-		headers: {
-			"Content-Type": "application/json",
-			"Authorization": "bearer " + token,
-		}
-	}
-	return dispatch => {
-		dispatch({
-			type: LUCKY_REQUEST
-		})
-		// var url = Ultilities.base_url() + "/awardSpin?spinId=" + id + "&scoinToken=" + scoinToken;
-		var url = Ultilities.base_url() + "lucky-spin/award-spin?lucky_spin_id=" + id;
-		return axios.get(url, header).then(function (response) {
-			dispatch({
-				type: LUCKY_PICK_RESPONSE,
-				data: response.data
-			})
-		}).catch(function (error) {
-			dispatch({
-				type: SERVER_ERROR
-			})
-		})
-	}
-}
 
 export const buyTurn = (id, turn, spin_name) => {
 	var header = {

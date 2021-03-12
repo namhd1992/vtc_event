@@ -82,7 +82,7 @@ class Lucky_Rotation extends React.Component {
 			itemOfSpin:[],
 			luckySpin:{},
 			userTurnSpin:{},
-			turnsFree:0,
+			turnsFree:10,
 			isLogin:false,
 			day:'00',
 			hour:'00', 
@@ -231,7 +231,7 @@ class Lucky_Rotation extends React.Component {
 		
 		
 		let theWheel = new Wheel({
-			'numSegments'       : 10,         // Specify number of segments.
+			'numSegments'       : 12,         // Specify number of segments.
 			'outerRadius'       : 150,       // Set outer radius so wheel fits inside the background.
 			'drawMode'          : 'image',   // drawMode must be set to image.
 			'drawText'          : true,      // Need to set this true if want code-drawn text on image wheels.
@@ -374,9 +374,10 @@ class Lucky_Rotation extends React.Component {
 	}
 
 	start=()=>{
-		const {turnsFree, itemOfSpin, luckySpin, isSpin, closeAuto, finished}=this.state;
+		const {turnsFree, itemOfSpin, luckySpin, isSpin, closeAuto}=this.state;
 		var _this = this;
-		var user = JSON.parse(localStorage.getItem("user"));
+		// var user = JSON.parse(localStorage.getItem("user"));
+		var user = 'nambv';
 		var time=Date.now();
 		if(time > luckySpin.endDate){
 			this.setState({message_status:"Vòng quay đã kết thúc."},()=>{
@@ -384,70 +385,46 @@ class Lucky_Rotation extends React.Component {
 			})
 		}else{
 			if (user !== null) {
-				if(!finished){
-					if(turnsFree>0){
-						this.props.pickCard(user.access_token, luckySpin.id).then(()=>{
-							var data=_this.props.dataPick;
-							var list=this.state.data_auto;
-							if(data!==undefined){
-								if(data.status ==="01"){
-									if(data.data.item.type==="LUCKY_NUMBER"){
-										this.setState({code:true})
-										setTimeout(()=>{
-											this.setState({noti_mdt:true})
-										},2000)
-									}else{
-										if(data.data.item.type!=="ACTION"){
-											setTimeout(()=>{
-												this.setState({noti_tudo:true})
-											},2000)
-											this.getVinhDanh(1);	
-										}
-										if(data.data.item.type==="SCOIN_CARD"){
-											this.setState({scoinCard:true})
-										}
-										this.setState({code:false})
-										
-									}
-									list.push(data.data.item.name);
-									var pos=1;
-									if(data.data.item.type==="SCOIN"){
-										pos=9;
-									}else{
-										var id=_this.props.dataPick.data.id;
-										pos = itemOfSpin.map(function(e) { return e.id; }).indexOf(id);
-									}
-									
-									this.resetWheel();
-									if(!isSpin && closeAuto){
-										this.startSpin(pos+1);
-									}	
-									_this.setState({itemBonus: data.data.item, data_auto: list, closeAuto:true});
-								}else if(data.status ==="04"){
-									$('#myModal13').modal('show');
-								}else if(data.status ==="07"){
-										this.setState({message_status:"Sự kiện chưa diễn ra hoặc đã kết thúc."},()=>{
-										$('#myModal8').modal('show');
-									})
-								}else if(data.status ==="10"){
-									this.setState({message_status:"Bạn cần xác nhận số ĐT để chơi.", xacthuc:true},()=>{
-										$('#myModal8').modal('show');
-									})
-								}else{
-									$('#myModal11').modal('show');
-									this.setState({message_error:'Vòng quay đang có lỗi. Vui lòng tải lại trang.'})
-								}
+				if(turnsFree>0){
+					this.props.pickCard('namebv').then(()=>{
+						var data=this.props.dataPick;
+						console.log(data)
+						var list=this.state.data_auto;
+						if(data!==undefined){
+							if(data.Status ===0){
+								var id=data.Data.AwardId;
+								var pos=0
+								pos = itemOfSpin.map(function(e) { return e.Id; }).indexOf(id);
+								console.log(pos+1)
+								// list.push(data.data.item.name);
+								
+								this.resetWheel();
+								if(!isSpin && closeAuto){
+									this.startSpin(pos+1);
+								}	
+								this.setState({itemBonus: data.Data, data_auto: list, closeAuto:true});
+							}else if(data.status ==="04"){
+								$('#myModal13').modal('show');
+							}else if(data.status ==="07"){
+									this.setState({message_status:"Sự kiện chưa diễn ra hoặc đã kết thúc."},()=>{
+									$('#myModal8').modal('show');
+								})
+							}else if(data.status ==="10"){
+								this.setState({message_status:"Bạn cần xác nhận số ĐT để chơi.", xacthuc:true},()=>{
+									$('#myModal8').modal('show');
+								})
 							}else{
-								$('#myModal12').modal('show');
-								this.setState({server_err:true})
+								$('#myModal11').modal('show');
+								this.setState({message_error:'Vòng quay đang có lỗi. Vui lòng tải lại trang.'})
 							}
-						})
-						
-					}else{
-						$('#myModal6').modal('show');
-					}
+						}else{
+							$('#myModal12').modal('show');
+							this.setState({server_err:true})
+						}
+					})
+					
 				}else{
-					$('#myModal13').modal('show');
+					$('#myModal6').modal('show');
 				}
 			} else {
 				$('#myModal5').modal('show');
@@ -531,33 +508,33 @@ class Lucky_Rotation extends React.Component {
 
 
 	getDetailData=()=>{
-		const {auto}=this.state;
-		var user = JSON.parse(localStorage.getItem("user"));
-		this.props.getRotationDetailDataUser(user.access_token, 119).then(()=>{
-			var data=this.props.dataRotationWithUser;
-			if(data!==undefined){
-				var turnsFree=data.data.userTurnSpin.turnsFree+data.data.userTurnSpin.turnsBuy;
-				if(data.status==='01'){
-					if(turnsFree>0){
-						if(auto){
-							this.start();
-						}
-					}else{
-						$('#myModal6').modal('show');
-						clearInterval(this.state.intervalId);
-					}
-					this.setState({turnsFree:turnsFree})
-				}else if(data.status ==="04"){
-					$('#myModal13').modal('show');
-				}else{
-					$('#myModal11').modal('show');
-					this.setState({message_error:'Lỗi hệ thống. Vui lòng thử lại.'})
-				}
-			}else{
-				$('#myModal12').modal('show');
-				this.setState({server_err:true})
-			}
-		});
+		// const {auto}=this.state;
+		// var user = JSON.parse(localStorage.getItem("user"));
+		// this.props.getRotationDetailDataUser(user.access_token, 119).then(()=>{
+		// 	var data=this.props.dataRotationWithUser;
+		// 	if(data!==undefined){
+		// 		var turnsFree=data.data.userTurnSpin.turnsFree+data.data.userTurnSpin.turnsBuy;
+		// 		if(data.status==='01'){
+		// 			if(turnsFree>0){
+		// 				if(auto){
+		// 					this.start();
+		// 				}
+		// 			}else{
+		// 				$('#myModal6').modal('show');
+		// 				clearInterval(this.state.intervalId);
+		// 			}
+		// 			this.setState({turnsFree:turnsFree})
+		// 		}else if(data.status ==="04"){
+		// 			$('#myModal13').modal('show');
+		// 		}else{
+		// 			$('#myModal11').modal('show');
+		// 			this.setState({message_error:'Lỗi hệ thống. Vui lòng thử lại.'})
+		// 		}
+		// 	}else{
+		// 		$('#myModal12').modal('show');
+		// 		this.setState({server_err:true})
+		// 	}
+		// });
 	}
 
 	// showPopup=()=>{
@@ -814,7 +791,7 @@ class Lucky_Rotation extends React.Component {
 
 	render() {
 		const {xacthuc, scoinCard,height, width, dialogLoginOpen, dialogBonus, auto, dialogWarning, textWarning, isLogin, userTurnSpin, day, hour, minute, second, code,numberPage, img_status, message_status, data_auto,message_error,linkLiveStream,
-			 activeTuDo, activeHistory, activeCodeBonus, activeVinhDanh, limit, countCodeBonus, countTuDo, countHistory, countVinhDanh, listHistory, listCodeBonus, listTuDo, listVinhDanh,itemBonus, turnsFree, noti_mdt, noti_tudo, finished, hour_live, minute_live, second_live, isLive, user}=this.state;
+			 activeTuDo, activeHistory, activeCodeBonus, activeVinhDanh, limit, countCodeBonus, countTuDo, countHistory, countVinhDanh, listHistory, listCodeBonus, listTuDo, listVinhDanh,itemBonus, turnsFree, noti_mdt, noti_tudo, hour_live, minute_live, second_live, isLive, user}=this.state;
 		const { classes } = this.props;
 		const notification_mdt=noti_mdt?(<span className="badge badge-pill badge-danger position-absolute noti-mdt">!</span>):(<span></span>);
 		const notification_tudo=noti_tudo?(<span className="badge badge-pill badge-danger position-absolute noti-tudo">!</span>):(<span></span>);
@@ -841,10 +818,6 @@ class Lucky_Rotation extends React.Component {
 									<td align="center" className="p-0 h6">Giây</td>
 								</tr>
 							</table>
-							{(finished)?(<div className="alert alert-danger text-center">
-								<p className="text-dark mb-0">Đã phát hết Mã dự thưởng</p>
-								<h2>100,000 / 100,000</h2>
-							</div>):(<div></div>)}
 							
 							</div>
 						</div> 
