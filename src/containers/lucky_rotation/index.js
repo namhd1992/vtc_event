@@ -13,6 +13,8 @@ import {
 	getHistoryTuDo,
 	getCodeBonus,
 	getVinhDanh,
+	getLuckyInfo,
+	getLuckyItems
 } from '../../modules/lucky'
 import Wheel from './Winwheel'
 import {
@@ -158,63 +160,75 @@ class Lucky_Rotation extends React.Component {
 	componentDidMount(){
 		const {img_width, img_height}=this.state;
 		var user = JSON.parse(localStorage.getItem("user"));
-		// this.timeShowLive();
-		if (user !== null) {
-			this.props.getRotationDetailDataUser(user.access_token, 119).then(()=>{
-				var data=this.props.dataRotationWithUser;
-				if(data!==undefined){
-					if(data.status==='01'){
-						// if(data.data.itemOfSpin[1].quantity===0 && data.data.itemOfSpin[4].quantity===0){
-						// 	var time=(1554984000000-Date.now())/1000;
-						// 	this.setState({finished:true})
-						// 	if(time>0){
-						// 		$('#myModal13').modal('show');
-						// 	}else{
-						// 		$('#myModal14').modal('show');
-						// 	}
-							
-						// }
-						this.getStatus(data.data.luckySpin);
-						// this.timeShowLive(data.data.luckySpin.endDate);
-						this.setState({userTurnSpin:data.data.userTurnSpin, user:user, itemOfSpin:data.data.itemOfSpin, luckySpin:data.data.luckySpin, turnsFree:(data.data.userTurnSpin.turnsFree+data.data.userTurnSpin.turnsBuy), isLogin:true, linkLiveStream:data.data.luckySpin.linkLiveStream})
-					}else{
-						$('#myModal11').modal('show');
-						this.setState({message_error:'Không lấy được dữ liệu người dùng. Vui lòng tải lại trang.'})
-					}
-				}else{
-					$('#myModal12').modal('show');
-					this.setState({server_err:true})
+
+		this.props.getLuckyInfo().then(()=>{
+			var data=this.props.dataLuckyInfo;
+			if(data!==undefined){
+				if(data.Status===0){
+					this.getStatus(data.Data)
 				}
-				
-			});
-		} else {
-			this.props.getRotationDetailData(119).then(()=>{
-				var data=this.props.dataRotation;
-				if(data!==undefined){
-					if(data.status==='01'){
-						// if(data.data.itemOfSpin[1].quantity===0 && data.data.itemOfSpin[4].quantity===0){
-						// 	var time=(1554984000000-Date.now())/1000;
-						// 	this.setState({finished:true})
-						// 	if(time>0){
-						// 		$('#myModal13').modal('show');
-						// 	}else{
-						// 		$('#myModal14').modal('show');
-						// 	}
-						// }
-						this.getStatus(data.data.luckySpin);
-						// this.timeShowLive(data.data.luckySpin.endDate);
-						this.setState({userTurnSpin:data.data.userTurnSpin, itemOfSpin:data.data.itemOfSpin, luckySpin:data.data.luckySpin, turnsFree:(data.data.userTurnSpin.turnsFree+data.data.userTurnSpin.turnsBuy), isLogin:false, linkLiveStream:data.data.luckySpin.linkLiveStream})
-					}else{
-						$('#myModal11').modal('show');
-						this.setState({message_error:'Không lấy được dữ liệu.  Vui lòng tải lại trang.'})
-					}
-				}else{
-					$('#myModal12').modal('show');
-					this.setState({server_err:true})
+			}
+		})
+
+		this.props.getLuckyItems().then(()=>{
+			var data=this.props.dataLuckyItems;
+			if(data!==undefined){
+				if(data.Status===0){
+					this.setState({itemOfSpin: data.Data})
 				}
-			});
-		}
+			}
+		})
+
 		this.getVinhDanh(1);
+
+
+		if (user !== null) {
+
+			// this.props.getRotationDetailDataUser(user.access_token, 119).then(()=>{
+			// 	var data=this.props.dataRotationWithUser;
+			// 	if(data!==undefined){
+			// 		if(data.status==='01'){
+			// 			this.getStatus(data.data.luckySpin);
+			// 			// this.timeShowLive(data.data.luckySpin.endDate);
+			// 			this.setState({userTurnSpin:data.data.userTurnSpin, user:user, itemOfSpin:data.data.itemOfSpin, luckySpin:data.data.luckySpin, turnsFree:(data.data.userTurnSpin.turnsFree+data.data.userTurnSpin.turnsBuy), isLogin:true, linkLiveStream:data.data.luckySpin.linkLiveStream})
+			// 		}else{
+			// 			$('#myModal11').modal('show');
+			// 			this.setState({message_error:'Không lấy được dữ liệu người dùng. Vui lòng tải lại trang.'})
+			// 		}
+			// 	}else{
+			// 		$('#myModal12').modal('show');
+			// 		this.setState({server_err:true})
+			// 	}
+				
+			// });
+		} else {
+			// this.props.getRotationDetailData(119).then(()=>{
+			// 	var data=this.props.dataRotation;
+			// 	if(data!==undefined){
+			// 		if(data.status==='01'){
+			// 			// if(data.data.itemOfSpin[1].quantity===0 && data.data.itemOfSpin[4].quantity===0){
+			// 			// 	var time=(1554984000000-Date.now())/1000;
+			// 			// 	this.setState({finished:true})
+			// 			// 	if(time>0){
+			// 			// 		$('#myModal13').modal('show');
+			// 			// 	}else{
+			// 			// 		$('#myModal14').modal('show');
+			// 			// 	}
+			// 			// }
+			// 			this.getStatus(data.data.luckySpin);
+			// 			// this.timeShowLive(data.data.luckySpin.endDate);
+			// 			this.setState({userTurnSpin:data.data.userTurnSpin, itemOfSpin:data.data.itemOfSpin, luckySpin:data.data.luckySpin, turnsFree:(data.data.userTurnSpin.turnsFree+data.data.userTurnSpin.turnsBuy), isLogin:false, linkLiveStream:data.data.luckySpin.linkLiveStream})
+			// 		}else{
+			// 			$('#myModal11').modal('show');
+			// 			this.setState({message_error:'Không lấy được dữ liệu.  Vui lòng tải lại trang.'})
+			// 		}
+			// 	}else{
+			// 		$('#myModal12').modal('show');
+			// 		this.setState({server_err:true})
+			// 	}
+			// });
+		}
+		
 		
 		let theWheel = new Wheel({
 			'numSegments'       : 10,         // Specify number of segments.
@@ -282,11 +296,13 @@ class Lucky_Rotation extends React.Component {
 
 	getVinhDanh=(pageNumber)=>{
 		const {limit}=this.state;
-		this.props.getVinhDanh(119, limit, (pageNumber-1)).then(()=>{
+		this.props.getVinhDanh(limit, (pageNumber-1)).then(()=>{
 			var data=this.props.dataVinhDanh;
 			if(data!==undefined){
-				if(data.status==='01'){	
-					this.setState({listVinhDanh:data.data, countVinhDanh:data.totalRecords})
+				if(data.Status===0){
+					var listVinhDanh=data.Data;
+					console.log(listVinhDanh)
+					this.setState({listVinhDanh:data.Data, countVinhDanh:listVinhDanh.length})
 				}else{
 					$('#myModal11').modal('show');
 					this.setState({message_error:'Không lấy được dữ liệu bảng vinh danh.'})
@@ -299,8 +315,11 @@ class Lucky_Rotation extends React.Component {
 	}
 
 	getStatus=(luckySpin)=>{
-		var start=luckySpin.startDate;
-		var end=luckySpin.endDate;
+		var StartDate=luckySpin.StartDate;
+		var EndDate=luckySpin.EndDate;
+		var start=StartDate.substring(StartDate.indexOf("(") +1,StartDate.indexOf(")"));
+		var end=EndDate.substring(EndDate.indexOf("(")+1,EndDate.indexOf(")"));
+		console.log(start, end)
 		var time=Date.now();
 
 		// var distance_3day=start - 3 * 86400 * 1000;
@@ -570,24 +589,38 @@ class Lucky_Rotation extends React.Component {
 		}, 1000);
 	}
 
-	timeShowLive=(times)=>{
-		var now=Date.now();
-		var _this=this;
-		if(now>times){
-			this.setState({isLive:true},()=>{
-				setInterval(()=>{
-					var time=(times-Date.now())/1000;
-					if(time>0){
-						var day=Math.floor(time/86400) > 9 ? Math.floor(time/86400) : `0${Math.floor(time/86400)}`;
-						var hour=Math.floor((time%86400)/3600) > 9 ? Math.floor((time%86400)/3600) : `0${Math.floor((time%86400)/3600)}`;
-						var minute=Math.floor(((time%86400)%3600)/60) > 9 ? Math.floor(((time%86400)%3600)/60) : `0${Math.floor(((time%86400)%3600)/60)}`;
-						var second=Math.ceil(((time%86400)%3600)%60) > 9 ? Math.ceil(((time%86400)%3600)%60) : `0${Math.ceil(((time%86400)%3600)%60)}`;
-						_this.setState({hour_live: hour, minute_live: minute, second_live:second})
-					}
-				}, 1000);
-			});
-		}
-	}
+	// changeTime=(time)=>{
+	// 	var now=Date.now();
+	// 	var _this=this;
+	// 	if(now>times){
+	// 		this.setState({isLive:true},()=>{
+	// 			setInterval(()=>{
+	// 				var time=(times-Date.now())/1000;
+	// 				if(time>0){
+	// 					var day=Math.floor(time/86400) > 9 ? Math.floor(time/86400) : `0${Math.floor(time/86400)}`;
+	// 					var hour=Math.floor((time%86400)/3600) > 9 ? Math.floor((time%86400)/3600) : `0${Math.floor((time%86400)/3600)}`;
+	// 					var minute=Math.floor(((time%86400)%3600)/60) > 9 ? Math.floor(((time%86400)%3600)/60) : `0${Math.floor(((time%86400)%3600)/60)}`;
+	// 					var second=Math.ceil(((time%86400)%3600)%60) > 9 ? Math.ceil(((time%86400)%3600)%60) : `0${Math.ceil(((time%86400)%3600)%60)}`;
+	// 					_this.setState({hour_live: hour, minute_live: minute, second_live:second})
+	// 				}
+	// 			}, 1000);
+	// 		});
+	// 	}
+	// }
+
+	timeConverter=(time)=>{
+		var start=time.substring(time.indexOf("(") +1,time.indexOf(")"));
+		var a = new Date(+start);
+		var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+		var year = a.getFullYear();
+		var month = months[a.getMonth()];
+		var date = a.getDate();
+		var hour = a.getHours();
+		var min = a.getMinutes();
+		var sec = a.getSeconds();
+		var time = date + ' ' + month + ' ' + year + ' ' + hour + ':' + min + ':' + sec ;
+		return time;
+	  }
 
 
 
@@ -921,9 +954,9 @@ class Lucky_Rotation extends React.Component {
 						<tbody className="top100">
 							{listVinhDanh.map((obj, key) => (
 								<tr key={key}>
-									<td className="border-right-0">{obj.userName}</td>
-									<td className="border-left-0 border-right-0">{obj.itemName}</td>
-									<td className="border-left-0">{obj.date}</td>
+									<td className="border-right-0">{obj.Username}</td>
+									<td className="border-left-0 border-right-0">{obj.AwardName}</td>
+									<td className="border-left-0">{this.timeConverter(obj.SpinTime)}</td>
 								</tr>
 							))}
 						</tbody>
@@ -1660,6 +1693,8 @@ class Lucky_Rotation extends React.Component {
 
 const mapStateToProps = state => ({
 	dataProfile: state.profile.data,
+	dataLuckyInfo: state.lucky.dataLuckyInfo,
+	dataLuckyItems:state.lucky.dataLuckyItems,
 	dataRotation:state.lucky.dataRotation,
 	dataRotationWithUser:state.lucky.dataRotationWithUser,
 	dataPick: state.lucky.dataPick,
@@ -1684,6 +1719,8 @@ const mapDispatchToProps = dispatch => bindActionCreators({
 	getTuDo,
 	getCodeBonus,
 	getVinhDanh,
+	getLuckyInfo,
+	getLuckyItems
 }, dispatch)
 
 

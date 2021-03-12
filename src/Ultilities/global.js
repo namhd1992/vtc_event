@@ -56,7 +56,7 @@ class Ultilities {
 		//live
 			// return "https://server.splay.vn/";
 		//dev
-			return "http://171.244.14.44:8080/";
+			return "http://10.0.3.25/";
 	}
 
 	static splay_api_key = () => {
