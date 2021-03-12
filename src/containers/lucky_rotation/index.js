@@ -315,18 +315,8 @@ class Lucky_Rotation extends React.Component {
 			this.setState({ img_status: sukiendangdienra});
 		}
 		if (time > end) {
-			if(time< 1572868800000){
-				this.setState({ img_status: livestream});
-				this.timeRemain(1572868800000)
-				$('#myModal13').modal('show');
-			}else if(luckySpin.linkLiveStream!=="" && time < 1572872400000){
-				this.setState({ img_status: livestream});
-				$('#myModal14').modal('show');
-			}else{
-				this.setState({ img_status: ketthuc, message_status:"Sự kiện đã kết thúc."});
-				$('#myModal14').modal('show');
-			}
-			
+			this.setState({ img_status: ketthuc, message_status:"Sự kiện đã kết thúc."});
+			$('#myModal14').modal('show');
 		}
 	}
 
