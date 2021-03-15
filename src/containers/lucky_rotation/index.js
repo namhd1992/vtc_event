@@ -335,7 +335,7 @@ class Lucky_Rotation extends React.Component {
 		}
 		if (time > end) {
 			this.setState({ img_status: ketthuc, message_status:"Sự kiện đã kết thúc."});
-			$('#myModal14').modal('show');
+			// $('#myModal14').modal('show');
 		}
 	}
 
@@ -403,19 +403,9 @@ class Lucky_Rotation extends React.Component {
 									this.startSpin(pos+1);
 								}	
 								this.setState({itemBonus: data.Data, data_auto: list, closeAuto:true});
-							}else if(data.status ==="04"){
-								$('#myModal13').modal('show');
-							}else if(data.status ==="07"){
-									this.setState({message_status:"Sự kiện chưa diễn ra hoặc đã kết thúc."},()=>{
-									$('#myModal8').modal('show');
-								})
-							}else if(data.status ==="10"){
-								this.setState({message_status:"Bạn cần xác nhận số ĐT để chơi.", xacthuc:true},()=>{
-									$('#myModal8').modal('show');
-								})
 							}else{
 								$('#myModal11').modal('show');
-								this.setState({message_error:'Vòng quay đang có lỗi. Vui lòng tải lại trang.'})
+								this.setState({message_error:data.Message})
 							}
 						}else{
 							$('#myModal12').modal('show');
@@ -618,7 +608,8 @@ class Lucky_Rotation extends React.Component {
 	}
 
 	showModalTuDo=()=>{
-		var user = JSON.parse(localStorage.getItem("user"));
+		// var user = JSON.parse(localStorage.getItem("user"));
+		var user='nambv'
 		if (user !== null) {
 			this.getDataTuDo(user);
 			$('#myModal4').modal('hide');
@@ -631,11 +622,11 @@ class Lucky_Rotation extends React.Component {
 	getDataTuDo=(user)=>{
 		const {luckySpin, limit, activeTuDo}=this.state;
 		// var offsetTuDo=(pageNumber-1)*limit;
-		this.props.getTuDo(user.access_token, luckySpin.id, limit, (activeTuDo-1)).then(()=>{
+		this.props.getTuDo(user, limit, (activeTuDo-1)).then(()=>{
 			var data=this.props.dataTuDo;
 			if(data!==undefined){
-				if(data.status==='01'){
-					this.setState({listTuDo:data.data, countTuDo:data.totalRecords, noti_tudo:false})
+				if(data.Status===0){
+					this.setState({listTuDo:data.Data, countTuDo:data.totalRecords, noti_tudo:false})
 				}else{
 					$('#myModal11').modal('show');
 					this.setState({message_error:'Chưa tải được dữ liệu. Vui lòng thử lại'})

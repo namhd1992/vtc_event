@@ -212,6 +212,57 @@ export const pickCard = (token) => {
 	}
 }
 
+export const getTuDo = (token, limit, offset) => {
+	var header = {
+		headers: {
+			"Content-Type": "application/json",
+			// "Authorization": "bearer " + token,
+		}
+	}
+	return dispatch => {
+		dispatch({
+			type: LUCKY_REQUEST
+		})
+		var url = Ultilities.base_url() + "luckywheel/user-spin-history/?username=" + token + "&limit=" + limit + "&offset=" + offset;
+		return axios.get(url, header).then(function (response) {
+			dispatch({
+				type: LUCKY_TU_DO,
+				data: response.data
+			})
+		}).catch(function (error) {
+			dispatch({
+				type: SERVER_ERROR
+			})
+		})
+	}
+}
+
+
+export const getHistoryTuDo = (token, limit, offset) => {
+	var header = {
+		headers: {
+			"Content-Type": "application/json",
+			// "Authorization": "bearer " + token,
+		}
+	}
+	return dispatch => {
+		dispatch({
+			type: LUCKY_REQUEST
+		})
+		var url = Ultilities.base_url() + "luckywheel/user-spin-history/?username=" + token + "&limit=" + limit + "&offset=" + offset;
+		return axios.get(url, header).then(function (response) {
+			dispatch({
+				type: LUCKY_HISTORY_TU_DO,
+				data: response.data
+			})
+		}).catch(function (error) {
+			dispatch({
+				type: SERVER_ERROR
+			})
+		})
+	}
+}
+
 export const getData = (limit, offset) => {
 	return dispatch => {
 		dispatch({
@@ -395,56 +446,7 @@ export const getRotationDetailDataUser = (token, id) => {
 	}
 }
 
-export const getTuDo = (token, id, limit, offset) => {
-	var header = {
-		headers: {
-			"Content-Type": "application/json",
-			"Authorization": "bearer " + token,
-		}
-	}
-	return dispatch => {
-		dispatch({
-			type: LUCKY_REQUEST
-		})
-		var url = Ultilities.base_url() + "lucky-spin-history/tudo?lucky_spin_id=" + id + "&limit=" + limit + "&offset=" + offset;
-		return axios.get(url, header).then(function (response) {
-			dispatch({
-				type: LUCKY_TU_DO,
-				data: response.data
-			})
-		}).catch(function (error) {
-			dispatch({
-				type: SERVER_ERROR
-			})
-		})
-	}
-}
 
-
-export const getHistoryTuDo = (token, id, limit, offset) => {
-	var header = {
-		headers: {
-			"Content-Type": "application/json",
-			"Authorization": "bearer " + token,
-		}
-	}
-	return dispatch => {
-		dispatch({
-			type: LUCKY_REQUEST
-		})
-		var url = Ultilities.base_url() + "lucky-spin-history/turn?lucky_spin_id=" + id + "&limit=" + limit + "&offset=" + offset;
-		return axios.get(url, header).then(function (response) {
-			dispatch({
-				type: LUCKY_HISTORY_TU_DO,
-				data: response.data
-			})
-		}).catch(function (error) {
-			dispatch({
-				type: SERVER_ERROR
-			})
-		})
-	}
-}
 
 
 
