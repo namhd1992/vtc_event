@@ -356,21 +356,27 @@ class Lucky_Rotation extends React.Component {
 			} else {
 				console.log("Trình duyệt không hỗ trợ localStorage");
 			}
-			window.location.replace(`http://graph.vtcmobile.vn/oauth/authorize?client_id=58306439627cac03c8e4259a87e2e1ca&redirect_uri=${window.location.protocol}//${window.location.host}/login&agencyid=0`)
+			// window.location.replace(`http://graph.vtcmobile.vn/oauth/authorize?client_id=58306439627cac03c8e4259a87e2e1ca&redirect_uri=${window.location.protocol}//${window.location.host}/login&agencyid=0`)
 			// window.location.replace(`http://sandbox.graph.vtcmobile.vn/oauth/authorize?client_id=4e7549789b14693eda4e019faaa0c446&agencyid=0&redirect_uri=${window.location.protocol}//${window.location.host}/`);
+			window.location.replace(`http://sandbox.graph.vtcmobile.vn/oauth/authorize?client_id=UH8DN779CWCMnCyeXGrm2BRqiTlJajUyZUEM0Kc&agencyid=0&redirect_uri=${window.location.protocol}//${window.location.host}/`);
 		}else{
 			$('#myModal12').modal('show');
 		}
 	}
 	logoutAction = () => {
 		localStorage.removeItem("user");
-		window.location.replace(
-			`https://graph.vtcmobile.vn/oauth/authorize?client_id=58306439627cac03c8e4259a87e2e1ca&redirect_uri=${window.location.protocol}//${window.location.host}&action=logout&agencyid=0`,
-		);
+		// window.location.replace(
+		// 	`https://graph.vtcmobile.vn/oauth/authorize?client_id=58306439627cac03c8e4259a87e2e1ca&redirect_uri=${window.location.protocol}//${window.location.host}&action=logout&agencyid=0`,
+		// );
 
 		// window.location.replace(
 		// 	`http://sandbox.graph.vtcmobile.vn/oauth/authorize?client_id=4e7549789b14693eda4e019faaa0c446&redirect_uri=${window.location.protocol}//${window.location.host}&action=logout&agencyid=0`,
 		// );
+
+		
+		window.location.replace(
+			`http://sandbox.graph.vtcmobile.vn/oauth/authorize?client_id=UH8DN779CWCMnCyeXGrm2BRqiTlJajUyZUEM0Kc&redirect_uri=${window.location.protocol}//${window.location.host}&action=logout&agencyid=0`,
+		);
 	}
 
 	start=()=>{
@@ -556,25 +562,6 @@ class Lucky_Rotation extends React.Component {
 		}, 1000);
 	}
 
-	// changeTime=(time)=>{
-	// 	var now=Date.now();
-	// 	var _this=this;
-	// 	if(now>times){
-	// 		this.setState({isLive:true},()=>{
-	// 			setInterval(()=>{
-	// 				var time=(times-Date.now())/1000;
-	// 				if(time>0){
-	// 					var day=Math.floor(time/86400) > 9 ? Math.floor(time/86400) : `0${Math.floor(time/86400)}`;
-	// 					var hour=Math.floor((time%86400)/3600) > 9 ? Math.floor((time%86400)/3600) : `0${Math.floor((time%86400)/3600)}`;
-	// 					var minute=Math.floor(((time%86400)%3600)/60) > 9 ? Math.floor(((time%86400)%3600)/60) : `0${Math.floor(((time%86400)%3600)/60)}`;
-	// 					var second=Math.ceil(((time%86400)%3600)%60) > 9 ? Math.ceil(((time%86400)%3600)%60) : `0${Math.ceil(((time%86400)%3600)%60)}`;
-	// 					_this.setState({hour_live: hour, minute_live: minute, second_live:second})
-	// 				}
-	// 			}, 1000);
-	// 		});
-	// 	}
-	// }
-
 	timeConverter=(time)=>{
 		var start=time.substring(time.indexOf("(") +1,time.indexOf(")"));
 		var a = new Date(+start);
@@ -641,7 +628,7 @@ class Lucky_Rotation extends React.Component {
 	getHistory=(user)=>{
 		const {luckySpin, limit, activeHistory}=this.state;
 		// var offsetTuDo=(pageNumber-1)*limit;
-		this.props.getHistoryTuDo(user.access_token, luckySpin.id, limit, (activeHistory-1)).then(()=>{
+		this.props.getHistoryTuDo(user, limit, (activeHistory-1)).then(()=>{
 			var data=this.props.dataHistoryTuDo;
 			if(data!==undefined){
 				if(data.status==='01'){

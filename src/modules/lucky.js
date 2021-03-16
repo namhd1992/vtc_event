@@ -223,7 +223,7 @@ export const getTuDo = (token, limit, offset) => {
 		dispatch({
 			type: LUCKY_REQUEST
 		})
-		var url = Ultilities.base_url() + "luckywheel/user-spin-history/?username=" + token + "&limit=" + limit + "&offset=" + offset;
+		var url = Ultilities.base_url() + "luckywheel/user-awards/?offset=" + offset + "&limit=" + limit;
 		return axios.get(url, header).then(function (response) {
 			dispatch({
 				type: LUCKY_TU_DO,
@@ -249,7 +249,7 @@ export const getHistoryTuDo = (token, limit, offset) => {
 		dispatch({
 			type: LUCKY_REQUEST
 		})
-		var url = Ultilities.base_url() + "luckywheel/user-spin-history/?username=" + token + "&limit=" + limit + "&offset=" + offset;
+		var url = Ultilities.base_url() + "luckywheel/user-spin-history/?offset=" + offset + "&limit=" + limit;
 		return axios.get(url, header).then(function (response) {
 			dispatch({
 				type: LUCKY_HISTORY_TU_DO,

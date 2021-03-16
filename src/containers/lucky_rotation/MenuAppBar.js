@@ -36,19 +36,19 @@ class MenuAppBar extends React.Component {
 		} else {
 			console.log("Trình duyệt không hỗ trợ localStorage");
 		}
-		window.location.replace(`http://graph.vtcmobile.vn/oauth/authorize?client_id=58306439627cac03c8e4259a87e2e1ca&agencyid=0&redirect_uri=${window.location.protocol}//${window.location.host}/`);
-		// window.location.replace(`http://sandbox.graph.vtcmobile.vn/oauth/authorize?client_id=4e7549789b14693eda4e019faaa0c446&agencyid=0&redirect_uri=${window.location.protocol}//${window.location.host}/`);
+		// window.location.replace(`http://graph.vtcmobile.vn/oauth/authorize?client_id=58306439627cac03c8e4259a87e2e1ca&agencyid=0&redirect_uri=${window.location.protocol}//${window.location.host}/`);
+		window.location.replace(`http://sandbox.graph.vtcmobile.vn/oauth/authorize?client_id=4e7549789b14693eda4e019faaa0c446&agencyid=0&redirect_uri=${window.location.protocol}//${window.location.host}/`);
 	}
 
 	logoutAction = () => {
 		this.setState({ auth: false });
 		localStorage.removeItem("user");
-		window.location.replace(
-			`https://graph.vtcmobile.vn/oauth/authorize?client_id=58306439627cac03c8e4259a87e2e1ca&redirect_uri=${window.location.protocol}//${window.location.host}&action=logout&agencyid=0`,
-		);
 		// window.location.replace(
-		// 	`http://sandbox.graph.vtcmobile.vn/oauth/authorize?client_id=4e7549789b14693eda4e019faaa0c446&redirect_uri=${window.location.protocol}//${window.location.host}&action=logout&agencyid=0`,
+		// 	`https://graph.vtcmobile.vn/oauth/authorize?client_id=58306439627cac03c8e4259a87e2e1ca&redirect_uri=${window.location.protocol}//${window.location.host}&action=logout&agencyid=0`,
 		// );
+		window.location.replace(
+			`http://sandbox.graph.vtcmobile.vn/oauth/authorize?client_id=4e7549789b14693eda4e019faaa0c446&redirect_uri=${window.location.protocol}//${window.location.host}&action=logout&agencyid=0`,
+		);
 	}
 
 	componentDidMount() {
@@ -93,15 +93,16 @@ class MenuAppBar extends React.Component {
 			var currentPath=localStorage.getItem("currentPath");
 			if (code != null) {
 				if (fb_mess === null) {
-					var url = Ultilities.base_url() + "signin";
-					var redirect = `http://graph.vtcmobile.vn/oauth/authorize?client_id=58306439627cac03c8e4259a87e2e1ca&redirect_uri=${window.location.protocol}//${window.location.host}`;
-					// var redirect = `https://graph.vtcmobile.vn/oauth/authorize?client_id=4e7549789b14693eda4e019faaa0c446&redirect_uri=${window.location.protocol}//${window.location.host}&agencyid=0&imei=GEWO4536NGREGR`;
-					var params = {
-						"code": code,
-						"redirect_uri": redirect
-					};
-					axios.post(url, params).then(function (response) {
-						var user_save = response.data.data;
+					var url = Ultilities.base_url() + "luckywheel/user-signin/";
+					var header = {
+						headers: {
+							"Content-Type": "application/text",
+							"auth-code": code,
+						}
+					}
+					axios.get(url, header).then(function (response) {
+						console.log(response)
+						var user_save = response.data;
 						user_save.expired = new Date();
 						localStorage.setItem("user", JSON.stringify(user_save));
 						_this.setState({ user: response.data.data });
@@ -116,14 +117,15 @@ class MenuAppBar extends React.Component {
 						_this.setState({ auth: false });
 					})
 				} else {
-					var url = Ultilities.base_url() + "signin";
-					var redirect = `http://graph.vtcmobile.vn/oauth/authorize?client_id=58306439627cac03c8e4259a87e2e1ca&redirect_uri=${window.location.protocol}//${window.location.host}/loginwidget`;
-					// var redirect = `https://graph.vtcmobile.vn/oauth/authorize?client_id=4e7549789b14693eda4e019faaa0c446&redirect_uri=${window.location.protocol}//${window.location.host}&agencyid=0&imei=GEWO4536NGREGR`;
-					var params = {
-						"code": code,
-						"redirect_uri": redirect
-					};
-					axios.post(url, params).then(function (response) {
+					var url = Ultilities.base_url() + "luckywheel/user-signin/";
+					var header = {
+						headers: {
+							"Content-Type": "application/text",
+							"auth-code": code,
+						}
+					}
+
+					axios.get(url, header).then(function (response) {
 						var user_save = response.data.data;
 						user_save.expired = new Date();
 						localStorage.setItem("user", JSON.stringify(user_save));
