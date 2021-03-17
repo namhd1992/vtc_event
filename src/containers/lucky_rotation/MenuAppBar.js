@@ -4,8 +4,8 @@ import Ultilities from '../../Ultilities/global'
 import axios from 'axios'
 import moment from 'moment'
 import {
-	getData
-} from '../../modules/profile'
+	getInfoUser
+} from '../../modules/lucky'
 
 import {
 	setStatusServer
@@ -73,9 +73,9 @@ class MenuAppBar extends React.Component {
 			var duration = moment.duration(end.diff(now));
 			var millisecond = Math.floor(duration.asMilliseconds()) + 86400000;
 			if (millisecond > 0) {
-				_this.props.getData(user.access_token).then(function () {
-					console.log(_this.props.data)
-					if (_this.props.data === null) {
+				_this.props.getInfoUser(user.access_token).then(function () {
+					console.log(_this.props.dataInfoUser)
+					if (_this.props.dataInfoUser === null) {
 						_this.logoutAction();
 					}
 				});
@@ -130,7 +130,7 @@ class MenuAppBar extends React.Component {
 						user_save.expired = new Date();
 						localStorage.setItem("user", JSON.stringify(user_save));
 						_this.setState({ user: response.data.data });
-						_this.props.getData(user_save.access_token).then(function () {
+						_this.props.getInfoUser(user_save.access_token).then(function () {
 							var newurl = "https://splay.vn:3003/userinfo";
 							axios.post(newurl, { account: _this.props.data.accountNumber, messid: fb_mess }).then(function (response1) {
 								console.log(response1);
@@ -165,7 +165,7 @@ const mapStateToProps = state => ({
 })
 
 const mapDispatchToProps = dispatch => bindActionCreators({
-	getData,
+	getInfoUser,
 	changeTitle,
 	setStatusServer
 }, dispatch)

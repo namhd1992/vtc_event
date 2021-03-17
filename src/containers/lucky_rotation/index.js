@@ -1,6 +1,7 @@
 import React from 'react'
 import { bindActionCreators } from 'redux'
 import Pagination from "react-js-pagination";
+import axios from 'axios';
 import { connect } from 'react-redux'
 import './css/style.css';
 import {
@@ -14,7 +15,10 @@ import {
 	getCodeBonus,
 	getVinhDanh,
 	getLuckyInfo,
-	getLuckyItems
+	getLuckyItems,
+	getInfoUser,
+	userLogout,
+	getDataUserSpin
 } from '../../modules/lucky'
 import Wheel from './Winwheel'
 import {
@@ -129,6 +133,7 @@ class Lucky_Rotation extends React.Component {
 			isLive:false,
 			user:{},
 			xacthuc:false,
+			timeWaiting:0
 		};
 	}
 	componentWillMount(){
@@ -183,51 +188,17 @@ class Lucky_Rotation extends React.Component {
 
 
 		if (user !== null) {
+			this.setState({isLogin:true, user:user})
+			this.props.getDataUserSpin(user.Token).then(()=>{
+				var data=this.props.dataUserSpin;
+				if(data!==undefined){
+					if(data.Status===0){
+						this.setState({turnsFree: data.Spins})
+					}
+				}
 
-			// this.props.getRotationDetailDataUser(user.access_token, 119).then(()=>{
-			// 	var data=this.props.dataRotationWithUser;
-			// 	if(data!==undefined){
-			// 		if(data.status==='01'){
-			// 			this.getStatus(data.data.luckySpin);
-			// 			// this.timeShowLive(data.data.luckySpin.endDate);
-			// 			this.setState({userTurnSpin:data.data.userTurnSpin, user:user, itemOfSpin:data.data.itemOfSpin, luckySpin:data.data.luckySpin, turnsFree:(data.data.userTurnSpin.turnsFree+data.data.userTurnSpin.turnsBuy), isLogin:true, linkLiveStream:data.data.luckySpin.linkLiveStream})
-			// 		}else{
-			// 			$('#myModal11').modal('show');
-			// 			this.setState({message_error:'Không lấy được dữ liệu người dùng. Vui lòng tải lại trang.'})
-			// 		}
-			// 	}else{
-			// 		$('#myModal12').modal('show');
-			// 		this.setState({server_err:true})
-			// 	}
-				
-			// });
-		} else {
-			// this.props.getRotationDetailData(119).then(()=>{
-			// 	var data=this.props.dataRotation;
-			// 	if(data!==undefined){
-			// 		if(data.status==='01'){
-			// 			// if(data.data.itemOfSpin[1].quantity===0 && data.data.itemOfSpin[4].quantity===0){
-			// 			// 	var time=(1554984000000-Date.now())/1000;
-			// 			// 	this.setState({finished:true})
-			// 			// 	if(time>0){
-			// 			// 		$('#myModal13').modal('show');
-			// 			// 	}else{
-			// 			// 		$('#myModal14').modal('show');
-			// 			// 	}
-			// 			// }
-			// 			this.getStatus(data.data.luckySpin);
-			// 			// this.timeShowLive(data.data.luckySpin.endDate);
-			// 			this.setState({userTurnSpin:data.data.userTurnSpin, itemOfSpin:data.data.itemOfSpin, luckySpin:data.data.luckySpin, turnsFree:(data.data.userTurnSpin.turnsFree+data.data.userTurnSpin.turnsBuy), isLogin:false, linkLiveStream:data.data.luckySpin.linkLiveStream})
-			// 		}else{
-			// 			$('#myModal11').modal('show');
-			// 			this.setState({message_error:'Không lấy được dữ liệu.  Vui lòng tải lại trang.'})
-			// 		}
-			// 	}else{
-			// 		$('#myModal12').modal('show');
-			// 		this.setState({server_err:true})
-			// 	}
-			// });
-		}
+			})
+		} 
 		
 		
 		let theWheel = new Wheel({
@@ -364,6 +335,7 @@ class Lucky_Rotation extends React.Component {
 		}
 	}
 	logoutAction = () => {
+		this.logout();
 		localStorage.removeItem("user");
 		// window.location.replace(
 		// 	`https://graph.vtcmobile.vn/oauth/authorize?client_id=58306439627cac03c8e4259a87e2e1ca&redirect_uri=${window.location.protocol}//${window.location.host}&action=logout&agencyid=0`,
@@ -372,18 +344,29 @@ class Lucky_Rotation extends React.Component {
 		// window.location.replace(
 		// 	`http://sandbox.graph.vtcmobile.vn/oauth/authorize?client_id=4e7549789b14693eda4e019faaa0c446&redirect_uri=${window.location.protocol}//${window.location.host}&action=logout&agencyid=0`,
 		// );
-
-		
 		window.location.replace(
 			`http://sandbox.graph.vtcmobile.vn/oauth/authorize?client_id=UH8DN779CWCMnCyeXGrm2BRqiTlJajUyZUEM0Kc&redirect_uri=${window.location.protocol}//${window.location.host}&action=logout&agencyid=0`,
 		);
 	}
 
+	logout=()=>{
+		var user = JSON.parse(localStorage.getItem("user"));
+		var header = {
+			headers: {
+				"Content-Type": "application/json",
+				"token": user.Token,
+			}
+		}
+		axios.get('http://10.0.3.25/luckywheel/user-signout/', header).then(function (response) {
+			console.log(response)
+		})
+	}
+
 	start=()=>{
 		const {turnsFree, itemOfSpin, luckySpin, isSpin, closeAuto}=this.state;
 		var _this = this;
-		// var user = JSON.parse(localStorage.getItem("user"));
-		var user = 'nambv';
+		var user = JSON.parse(localStorage.getItem("user"));
+		// var user = 'nambv';
 		var time=Date.now();
 		if(time > luckySpin.endDate){
 			this.setState({message_status:"Vòng quay đã kết thúc."},()=>{
@@ -391,36 +374,43 @@ class Lucky_Rotation extends React.Component {
 			})
 		}else{
 			if (user !== null) {
-				if(turnsFree>0){
-					this.props.pickCard('namebv').then(()=>{
-						var data=this.props.dataPick;
-						console.log(data)
-						var list=this.state.data_auto;
-						if(data!==undefined){
-							if(data.Status ===0){
-								var id=data.Data.AwardId;
-								var pos=0
-								pos = itemOfSpin.map(function(e) { return e.Id; }).indexOf(id);
-								console.log(pos+1)
-								// list.push(data.data.item.name);
-								
-								this.resetWheel();
-								if(!isSpin && closeAuto){
-									this.startSpin(pos+1);
-								}	
-								this.setState({itemBonus: data.Data, data_auto: list, closeAuto:true});
+				if(user.VipLevel!==0){
+					if(turnsFree>0){
+						this.props.pickCard(user.Token).then(()=>{
+							var data=this.props.dataPick;
+							console.log(data)
+							var list=this.state.data_auto;
+							if(data!==undefined){
+								if(data.Status ===0){
+									var id=data.Data.AwardId;
+									var pos=0
+									pos = itemOfSpin.map(function(e) { return e.Id; }).indexOf(id);
+									list.push(data.Data.AwardName);
+									
+									this.resetWheel();
+									if(!isSpin && closeAuto){
+										this.startSpin(pos+1);
+									}	
+									this.setState({itemBonus: data.Data, data_auto: list, closeAuto:true});
+								}else if(data.Status ===2){
+									$('#matluot').modal('show');
+									this.setState({message_error:data.Message, timeWaiting:data.WaitingSeconds})
+									this.timeWaitings(data.WaitingSeconds)
+								}else{
+									$('#myModal11').modal('show');
+									this.setState({message_error:data.Message})
+								}
 							}else{
-								$('#myModal11').modal('show');
-								this.setState({message_error:data.Message})
+								$('#myModal12').modal('show');
+								this.setState({server_err:true})
 							}
-						}else{
-							$('#myModal12').modal('show');
-							this.setState({server_err:true})
-						}
-					})
-					
+						})
+						
+					}else{
+						$('#myModal6').modal('show');
+					}
 				}else{
-					$('#myModal6').modal('show');
+					$('#activeVip').modal('show');
 				}
 			} else {
 				$('#myModal5').modal('show');
@@ -504,33 +494,32 @@ class Lucky_Rotation extends React.Component {
 
 
 	getDetailData=()=>{
-		// const {auto}=this.state;
-		// var user = JSON.parse(localStorage.getItem("user"));
-		// this.props.getRotationDetailDataUser(user.access_token, 119).then(()=>{
-		// 	var data=this.props.dataRotationWithUser;
-		// 	if(data!==undefined){
-		// 		var turnsFree=data.data.userTurnSpin.turnsFree+data.data.userTurnSpin.turnsBuy;
-		// 		if(data.status==='01'){
-		// 			if(turnsFree>0){
-		// 				if(auto){
-		// 					this.start();
-		// 				}
-		// 			}else{
-		// 				$('#myModal6').modal('show');
-		// 				clearInterval(this.state.intervalId);
-		// 			}
-		// 			this.setState({turnsFree:turnsFree})
-		// 		}else if(data.status ==="04"){
-		// 			$('#myModal13').modal('show');
-		// 		}else{
-		// 			$('#myModal11').modal('show');
-		// 			this.setState({message_error:'Lỗi hệ thống. Vui lòng thử lại.'})
-		// 		}
-		// 	}else{
-		// 		$('#myModal12').modal('show');
-		// 		this.setState({server_err:true})
-		// 	}
-		// });
+		const {auto}=this.state;
+		var user = JSON.parse(localStorage.getItem("user"));
+		this.props.getDataUserSpin(user.Token).then(()=>{
+			var data=this.props.dataUserSpin;
+			if(data!==undefined){
+				var turnsFree=data.Spins
+				if(data.Status===0){
+					if(turnsFree>0){
+						if(auto){
+							this.start();
+						}
+					}else{
+						$('#myModal6').modal('show');
+						clearInterval(this.state.intervalId);
+					}
+					this.setState({turnsFree:turnsFree})
+				}else{
+					$('#myModal11').modal('show');
+					this.setState({message_error:'Lỗi hệ thống. Vui lòng thử lại.'})
+				}
+			}else{
+				$('#myModal12').modal('show');
+				this.setState({server_err:true})
+			}
+
+		})
 	}
 
 	// showPopup=()=>{
@@ -560,6 +549,12 @@ class Lucky_Rotation extends React.Component {
 				// _this.setState({hour_live: hour, minute_live: minute, second_live:second})
 			}
 		}, 1000);
+	}
+
+	timeWaitings=(time)=>{
+		var minute=Math.floor(time/60) > 9 ? Math.floor(time/60) : `0${Math.floor(time/60)}`;
+		var second=Math.ceil(time%60) > 9 ? Math.ceil(time%60) : `0${Math.ceil(time%60)}`;
+		this.setState({minute_live: minute, second_live:second})
 	}
 
 	timeConverter=(time)=>{
@@ -595,8 +590,8 @@ class Lucky_Rotation extends React.Component {
 	}
 
 	showModalTuDo=()=>{
-		// var user = JSON.parse(localStorage.getItem("user"));
-		var user='nambv'
+		var user = JSON.parse(localStorage.getItem("user"));
+		// var user='nambv'
 		if (user !== null) {
 			this.getDataTuDo(user);
 			$('#myModal4').modal('hide');
@@ -609,7 +604,7 @@ class Lucky_Rotation extends React.Component {
 	getDataTuDo=(user)=>{
 		const {luckySpin, limit, activeTuDo}=this.state;
 		// var offsetTuDo=(pageNumber-1)*limit;
-		this.props.getTuDo(user, limit, (activeTuDo-1)).then(()=>{
+		this.props.getTuDo(user.Token, limit, (activeTuDo-1)).then(()=>{
 			var data=this.props.dataTuDo;
 			if(data!==undefined){
 				if(data.Status===0){
@@ -628,11 +623,11 @@ class Lucky_Rotation extends React.Component {
 	getHistory=(user)=>{
 		const {luckySpin, limit, activeHistory}=this.state;
 		// var offsetTuDo=(pageNumber-1)*limit;
-		this.props.getHistoryTuDo(user, limit, (activeHistory-1)).then(()=>{
+		this.props.getHistoryTuDo(user.Token, limit, (activeHistory-1)).then(()=>{
 			var data=this.props.dataHistoryTuDo;
 			if(data!==undefined){
-				if(data.status==='01'){
-					this.setState({listHistory:data.data, countHistory:data.totalRecords})
+				if(data.Status===0){
+					this.setState({listHistory:data.Data, countHistory:data.totalRecords})
 				}else{
 					$('#myModal11').modal('show');
 					this.setState({message_error:'Chưa tải được dữ liệu. Vui lòng thử lại'})
@@ -652,7 +647,7 @@ class Lucky_Rotation extends React.Component {
 		const {luckySpin, offsetCode, limit}=this.state;
 		var user = JSON.parse(localStorage.getItem("user"));
 		if(user !== null){
-			this.props.getCodeBonus(user.access_token, luckySpin.id, 'LUCKY_NUMBER').then(()=>{
+			this.props.getCodeBonus(user.Token, luckySpin.id, 'LUCKY_NUMBER').then(()=>{
 				var data=this.props.dataCodeBonus;
 				if(data!==undefined){
 					if(data.status==='01'){
@@ -693,10 +688,6 @@ class Lucky_Rotation extends React.Component {
 	}
 	closeServerErr=()=>{
 		$('#myModal12').modal('hide');
-	}
-
-	closePopupFinish=()=>{
-		$('#myModal13').modal('hide');
 	}
 
 	// hideModalCode=()=>{
@@ -754,14 +745,6 @@ class Lucky_Rotation extends React.Component {
 		this.setState({countCodeBonus:data.length, listCodeBonus:data.slice(0,5)})
 	}
 
-	showPopupLiveStream=()=>{
-		var time=(1572868800000-Date.now())/1000;
-		if(time>0){
-			$('#myModal13').modal('show');
-		}else{
-			$('#myModal14').modal('show');
-		}
-	}
 
 	randomItemIndex=()=>{
 		// var item = items[Math.floor(Math.random()*items.length)];
@@ -826,7 +809,7 @@ class Lucky_Rotation extends React.Component {
 						{/* <img src={vqmm_p2} alt="Vòng quay may mắn" className="img-fluid"/>     */}
 					</div>
 					<div className="btn-logout">
-						{(isLogin)?(<div><p className="p-0 m-0 text-center">Xin chào {userTurnSpin.currName}</p>
+						{(isLogin)?(<div><p className="p-0 m-0 text-center">Xin chào {user.Username}</p>
 						<h5 className="text-center" onClick={this.logoutAction}><a style={{cursor:'pointer'}} title="Đăng xuất">Đăng xuất</a></h5></div>):(<h5 className="text-center" onClick={this.loginAction}><a style={{cursor:'pointer'}} title="Đăng nhập" >Đăng nhập</a></h5>)}
 						
 					</div>
@@ -1089,9 +1072,9 @@ class Lucky_Rotation extends React.Component {
 										<tbody class="popup-tudo">
 											{listTuDo.map((obj, key) => (
 												<tr key={key}>
-													<td className="border-right-0">{obj.itemName}</td>
-													<td className="border-left-0 border-right-0">{obj.description}</td>
-													<td className="border-left-0">{obj.date}</td>
+													<td className="border-right-0">{obj.AwardName}</td>
+													<td className="border-left-0 border-right-0">{obj.AwardSpecific}</td>
+													<td className="border-left-0">{this.timeConverter(obj.SpinTime)}</td>
 												</tr>
 											))}
 										</tbody>
@@ -1124,9 +1107,9 @@ class Lucky_Rotation extends React.Component {
 										<tbody class="popup-tudo">
 											{listHistory.map((obj, key) => (
 												<tr key={key}>
-													<td className="border-right-0">{obj.stt}</td>
-													<td className="border-left-0 border-right-0">{obj.item_name}</td>
-													<td className="border-left-0">{obj.date}</td>
+													<td className="border-right-0">{key}</td>
+													<td className="border-left-0 border-right-0">{obj.AwardName}</td>
+													<td className="border-left-0">{this.timeConverter(obj.SpinTime)}</td>
 												</tr>
 											))}
 										</tbody>
@@ -1292,7 +1275,7 @@ class Lucky_Rotation extends React.Component {
 				</div>
 			</div>
 
-			{/* <!-- The Modal Thông báo đăng nhập--> */}
+			{/* <!-- The Modal Thông báo hết lượt--> */}
 			<div className="modal fade" id="myModal6" style={{zIndex:10002}}>
 				<div className="modal-dialog">
 					<div className="modal-content popup-phanthuong">
@@ -1306,9 +1289,9 @@ class Lucky_Rotation extends React.Component {
 					{/* <!-- Modal body --> */}
 					<div className="modal-body">
 						<div className="table-responsive mt-2">              
-							<h5 className="text-thele lead text-center">Bạn đã hết lượt quay!</h5>
-							<p className="text-thele lead text-center">Hãy nạp Scoin để nhận thêm lượt chơi Vòng quay tháng 10.</p>
-							<button type="button" className="btn btn-xacnhan text-white btn-block text-center py-4" onClick={()=>this.openTabNapScoin('https://scoin.vn/nap-game')}>Nạp Game</button>
+							<h5 className="text-thele lead text-center">Bạn đã hết lượt quay ngày hôm nay!</h5>
+							{/* <p className="text-thele lead text-center">Hãy nạp Scoin để nhận thêm lượt chơi Vòng quay tháng 10.</p> */}
+							{/* <button type="button" className="btn btn-xacnhan text-white btn-block text-center py-4" onClick={()=>this.openTabNapScoin('https://scoin.vn/nap-game')}>Nạp Game</button> */}
 							{/* <button type="button" className="btn btn-xacnhan text-white btn-block text-center py-4" onClick={()=>this.openTabNapScoin('http://sandbox.scoin.vn/nap-vao-game?GameId=330287')}>Nạp Game</button> */}
 						</div>       
 					</div>
@@ -1476,6 +1459,30 @@ class Lucky_Rotation extends React.Component {
 						</div>
 					</div>
 				</div>
+
+				<div className="modal fade" id="matluot">
+					<div className="modal-dialog">
+						<div className="modal-content popup-phanthuong">
+
+						{/* <!-- Modal Header --> */}
+						<div className="modal-header border-bottom-0">
+							<h4 className="modal-title w-100 text-center"><img src={img_thongbao} alt="" /></h4>
+							<button type="button" className="close" data-dismiss="modal"><img src={btn_close} alt="Đóng" /></button>
+						</div>
+
+						{/* <!-- Modal body --> */}
+						<div className="modal-body">
+							<div className="table-responsive mt-2">              
+								<h5 className="text-thele lead text-center">{message_error}</h5>
+								<h5 className="text-thele lead text-center">Thời gian còn lại: {minute_live} : {second_live}</h5>
+
+							</div>       
+						</div>
+
+						</div>
+					</div>
+				</div>
+
 				<div className="modal fade" id="myModal12">
 					<div className="modal-dialog">
 						<div className="modal-content popup-phanthuong">
@@ -1493,32 +1500,6 @@ class Lucky_Rotation extends React.Component {
 								<h5 className="text-thele lead text-center">Hệ thống đang được nâng cấp để tối ưu. Vui lòng quay lại sau 10 phút.</h5>
 								<h5 className="text-thele lead text-center">Xin lỗi vì sự bất tiện này</h5>
 								<button type="button" className="btn btn-xacnhan text-white btn-block text-center py-4" onClick={this.closeServerErr}>Xác nhận</button>
-							</div>       
-						</div>
-
-						</div>
-					</div>
-				</div>
-
-				<div className="modal fade" id="myModal13">
-					<div className="modal-dialog">
-						<div className="modal-content popup-phanthuong">
-
-						{/* <!-- Modal Header --> */}
-						<div className="modal-header border-bottom-0">
-							<h4 className="modal-title w-100 text-center"><img src={img_thongbao} alt="" /></h4>
-							<button type="button" className="close" data-dismiss="modal"><img src={btn_close} alt="Đóng" /></button>
-						</div>
-
-						{/* <!-- Modal body --> */}
-						<div className="modal-body">
-							<div className="table-responsive mt-2"> 
-								<h3 class="text-center text-red">Livestream chưa diễn ra.</h3>          
-								<h5 className="text-thele lead text-center">Mời quay lại vào lúc 19:00 ngày 04/11/2019 để xem trực tiếp buổi so Mã dự thưởng trúng iPhone 11 Pro Max 256Gb</h5>
-								<p class="text-center text-thele">Phát sóng trực tiếp tại trang sự kiện <a style={{color:'#0066ff', textDecoration:'underline'}}>https://vongquayt10.splay.vn</a></p>
-								<p class="text-center text-thele">Và fanpage Scoin: <a href="https://www.facebook.com/scoinvtcmobile" title="Fanpage Scoin" target="_blank">https://www.facebook.com/scoinvtcmobile</a></p>
-								<h5 className="text-thele lead text-center">BTC trân trọng thông báo.</h5>
-								<button type="button" className="btn btn-xacnhan text-white btn-block text-center py-4" onClick={this.closePopupFinish}>Xác nhận</button>
 							</div>       
 						</div>
 
@@ -1614,27 +1595,6 @@ class Lucky_Rotation extends React.Component {
 						</div>
 					</div>
 				</div>
-				{/* <div class="modal fade" id="myModal8">
-					<div class="modal-dialog">
-						<div class="modal-content popup-phanthuong">
-						<div class="modal-header border-bottom-0">
-							<h4 class="modal-title w-100 text-center"><img src="images/img-thongbao.png" alt="" /></h4>
-							<button type="button" class="close" data-dismiss="modal"><img src="images/btn-close.png" alt="Đóng" /></button>
-						</div>
-						<div class="modal-body">
-								<div class="facebook-responsive">
-									<iframe src={linkLiveStream} width="560" height="315" style="border:none;overflow:hidden" scrolling="no" frameborder="0" allowTransparency="true" allowFullScreen="true"></iframe>                
-								</div>
-								<h3 class="text-center text-red">Livestream chưa diễn ra.</h3>
-								<p class="text-center text-thele">Mời quay lại vào lúc 19:00 ngày 04/11/2019 để xem trực tiếp buổi so Mã dự thưởng trúng iPhone 11 Pro Max 256Gb</p>
-								<p class="text-center text-thele">Phát sóng trực tiếp tại trang sự kiện <a href="https://vongquayt10.splay.vn" title="Vòng quay tháng 10">https://vongquayt10.splay.vn</a></p>
-								<p class="text-center text-thele">Và fanpage Scoin: <a href="https://www.facebook.com/scoinvtcmobile" title="Fanpage Scoin" target="_blank">https://www.facebook.com/scoinvtcmobile</a></p>
-								<button type="button" class="btn btn-xacnhan text-white btn-block text-center py-4">Xác nhận</button>   
-						</div>
-
-						</div>
-					</div>
-				</div> */}
 				<ReactResizeDetector handleWidth={true} handleHeight={true} onResize={this.onResize} />
 
 
@@ -1646,6 +1606,8 @@ const mapStateToProps = state => ({
 	dataProfile: state.profile.data,
 	dataLuckyInfo: state.lucky.dataLuckyInfo,
 	dataLuckyItems:state.lucky.dataLuckyItems,
+	dataInfoUser:state.lucky.dataInfoUser,
+	dataUserSpin:state.lucky.dataUserSpin,
 	dataRotation:state.lucky.dataRotation,
 	dataRotationWithUser:state.lucky.dataRotationWithUser,
 	dataPick: state.lucky.dataPick,
@@ -1664,6 +1626,7 @@ const mapDispatchToProps = dispatch => bindActionCreators({
 	getRotationDetailData,
 	getRotationDetailDataUser,
 	pickCard,
+	getInfoUser,
 	buyTurn,
 	getHistoryTuDo,
 	getData,
@@ -1671,7 +1634,9 @@ const mapDispatchToProps = dispatch => bindActionCreators({
 	getCodeBonus,
 	getVinhDanh,
 	getLuckyInfo,
-	getLuckyItems
+	getLuckyItems,
+	userLogout,
+	getDataUserSpin
 }, dispatch)
 
 
