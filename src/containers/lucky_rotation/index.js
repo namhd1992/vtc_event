@@ -86,7 +86,7 @@ class Lucky_Rotation extends React.Component {
 			itemOfSpin:[],
 			luckySpin:{},
 			userTurnSpin:{},
-			turnsFree:10,
+			turnsFree:0,
 			isLogin:false,
 			day:'00',
 			hour:'00', 
@@ -273,7 +273,7 @@ class Lucky_Rotation extends React.Component {
 				if(data.Status===0){
 					var listVinhDanh=data.Data;
 					console.log(listVinhDanh)
-					this.setState({listVinhDanh:data.Data, countVinhDanh:listVinhDanh.length})
+					this.setState({listVinhDanh:data.Data, countVinhDanh:data.Totals})
 				}else{
 					$('#myModal11').modal('show');
 					this.setState({message_error:'Không lấy được dữ liệu bảng vinh danh.'})
@@ -608,7 +608,7 @@ class Lucky_Rotation extends React.Component {
 			var data=this.props.dataTuDo;
 			if(data!==undefined){
 				if(data.Status===0){
-					this.setState({listTuDo:data.Data, countTuDo:data.totalRecords, noti_tudo:false})
+					this.setState({listTuDo:data.Data, countTuDo:data.Totals, noti_tudo:false})
 				}else{
 					$('#myModal11').modal('show');
 					this.setState({message_error:'Chưa tải được dữ liệu. Vui lòng thử lại'})
@@ -627,7 +627,7 @@ class Lucky_Rotation extends React.Component {
 			var data=this.props.dataHistoryTuDo;
 			if(data!==undefined){
 				if(data.Status===0){
-					this.setState({listHistory:data.Data, countHistory:data.totalRecords})
+					this.setState({listHistory:data.Data, countHistory:data.Totals})
 				}else{
 					$('#myModal11').modal('show');
 					this.setState({message_error:'Chưa tải được dữ liệu. Vui lòng thử lại'})
